@@ -8,11 +8,7 @@ EXEC AddSpecimen @GivenGenusName = 'Lagria',
 				@GivenYcoor = 52.436343,
 				@GivenXcoor = 4.534554,
 				@GivenLocalityName = 'Berg',
-				@GivenCollectionDate = '2018-04-15',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
+				@GivenCollectionDate = '2018-04-15'
 GO
 
 EXEC AddSpecimen @GivenGenusName = 'Coccinella',
@@ -22,11 +18,7 @@ EXEC AddSpecimen @GivenGenusName = 'Coccinella',
 				@GivenYcoor = 52.436343,
 				@GivenXcoor = 4.534554,
 				@GivenLocalityName = 'Berg',
-				@GivenCollectionDate = '2018-04-15',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
+				@GivenCollectionDate = '2018-04-15'
 GO
 
 EXEC AddSpecimen @GivenGenusName = 'Lagria',
@@ -36,11 +28,7 @@ EXEC AddSpecimen @GivenGenusName = 'Lagria',
 				@GivenYcoor = 52.437685,
 				@GivenXcoor = 4.539898,
 				@GivenLocalityName = 'Rivier',
-				@GivenCollectionDate = '2018-04-18',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
+				@GivenCollectionDate = '2018-04-18'
 GO
 
 EXEC AddSpecimen @GivenGenusName = 'Vespula',
@@ -50,11 +38,7 @@ EXEC AddSpecimen @GivenGenusName = 'Vespula',
 				@GivenYcoor = 52.56578,
 				@GivenXcoor = 4.539909,
 				@GivenLocalityName = 'Stad',
-				@GivenCollectionDate = '2018-04-18',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
+				@GivenCollectionDate = '2018-04-18'
 GO
 
 EXEC AddSpecimen @GivenGenusName = 'Lagria',
@@ -64,11 +48,7 @@ EXEC AddSpecimen @GivenGenusName = 'Lagria',
 				@GivenYcoor = 52.437685,
 				@GivenXcoor = 4.539898,
 				@GivenLocalityName = 'Rivier',
-				@GivenCollectionDate = '2018-04-18',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
+				@GivenCollectionDate = '2018-04-18'
 GO
 
 
@@ -78,11 +58,7 @@ EXEC AddSpecimen @GivenGenusName = 'Amara',
 				@GivenYcoor = 52.587654,
 				@GivenXcoor = 4.609709,
 				@GivenLocalityName = 'Bos',
-				@GivenCollectionDate = '2018-04-19',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
+				@GivenCollectionDate = '2018-04-19'
 GO
 
 EXEC AddSpecimen @GivenGenusName = 'Blabs',
@@ -91,10 +67,5 @@ EXEC AddSpecimen @GivenGenusName = 'Blabs',
 				@GivenYcoor = 52.587654,
 				@GivenXcoor = 4.609709,
 				@GivenLocalityName = 'Bos',
-				@GivenCollectionDate = '2018-04-19',
-				@RelevantTaxonID = null,
-				@RelevantIdentificationID = null,
-				@RelevantCollectionID = null,
-				@OrphanMessage = null
-
+				@GivenCollectionDate = '2018-04-19'
 GO

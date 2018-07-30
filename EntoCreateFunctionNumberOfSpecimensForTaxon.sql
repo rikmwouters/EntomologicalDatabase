@@ -8,8 +8,7 @@ CREATE FUNCTION NumberOfSpecimensForTaxon(@TaxonID int)
 	BEGIN
 		DECLARE @NumberOfSpecimens int
 		SELECT @NumberOfSpecimens = COUNT(SpecimenID)
-			FROM Specimens
-			INNER JOIN Identifications ON Specimens.IdentificationID = Identifications.IdentificationID
+			FROM Identifications
 			WHERE DeterminedTaxonID = @TaxonID
 
 		RETURN @NumberOfSpecimens

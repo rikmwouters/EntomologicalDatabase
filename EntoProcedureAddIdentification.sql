@@ -53,24 +53,15 @@ ELSE
 
 IF NOT EXISTS (
 		SELECT IdentificationID FROM Identifications 
-		WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate AND DeterminedTaxonID = @RelevantTaxonID
+		WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate AND DeterminedTaxonID = @RelevantTaxonID AND SpecimenID = @GivenSpecimenID
 	)
 	BEGIN
-		INSERT INTO Identifications (IdentifiedBy, IdentificationDate, DeterminedTaxonID)
-		VALUES (@GivenIdentifiedBy, @GivenIdentificationDate, @RelevantTaxonID)
+		INSERT INTO Identifications (IdentifiedBy, IdentificationDate, DeterminedTaxonID, SpecimenID)
+		VALUES (@GivenIdentifiedBy, @GivenIdentificationDate, @RelevantTaxonID, @GivenSpecimenID)
 		SELECT @RelevantIdentificationID = SCOPE_IDENTITY()
 	END
 ELSE 
 	SET @RelevantIdentificationID = (SELECT IdentificationID FROM Identifications 
 	WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate)
-
-SELECT IdentificationID FROM Identifications 
-WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate
-
-----------------Modify identificationID------------------------------------------------------------------------------------
-
-UPDATE Specimens
-SET IdentificationID = @RelevantIdentificationID
-WHERE SpecimenID = @GivenSpecimenID
 
 GO
