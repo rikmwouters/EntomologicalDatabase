@@ -56,6 +56,7 @@ BEGIN TRY
 		IdentifiedBy varchar(255),
 		IdentificationDate date,
 		SpecimenID int,
+		Inferior bit DEFAULT 0,
 		CONSTRAINT FK_DeterminedTaxonID FOREIGN KEY (DeterminedTaxonID) REFERENCES PrimaryTaxons(TaxonID),
 		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE,
 		PRIMARY KEY (IdentificationID)

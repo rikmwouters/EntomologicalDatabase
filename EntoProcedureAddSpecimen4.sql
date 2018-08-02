@@ -10,6 +10,7 @@ CREATE PROCEDURE AddSpecimen
 		@GivenSpeciesName varchar(255) = 'sp',
 		@GivenIdentifiedBy varchar(255),
 		@GivenIdentificationDate varchar(255),
+		@GivenInferior bit,
 		@GivenYcoor float,
 		@GivenXcoor float,
 		@GivenLocalityName varchar(255),
@@ -60,8 +61,8 @@ IF NOT EXISTS (
 		WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate AND DeterminedTaxonID = @RelevantTaxonID
 	)
 	BEGIN
-		INSERT INTO Identifications (IdentifiedBy, IdentificationDate, DeterminedTaxonID)
-		VALUES (@GivenIdentifiedBy, @GivenIdentificationDate, @RelevantTaxonID)
+		INSERT INTO Identifications (IdentifiedBy, IdentificationDate, DeterminedTaxonID, Inferior)
+		VALUES (@GivenIdentifiedBy, @GivenIdentificationDate, @RelevantTaxonID, @GivenInferior)
 		SELECT @RelevantIdentificationID = SCOPE_IDENTITY()
 	END
 ELSE 
