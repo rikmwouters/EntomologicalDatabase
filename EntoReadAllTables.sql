@@ -7,3 +7,4 @@ SELECT * FROM PrimaryTaxons
 SELECT * FROM Identifications
 SELECT * FROM Collections
 SELECT * FROM Specimens
+SELECT * FROM Images

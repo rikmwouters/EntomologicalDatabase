@@ -4,7 +4,7 @@ GO
 BEGIN TRAN
 
 BEGIN TRY
-	DROP TABLE dbo.Identifications, dbo.Specimens, dbo.Collections, dbo.HostRelations, dbo.PrimaryTaxons, dbo.HostTaxons
+	DROP TABLE dbo.Images, dbo.Identifications, dbo.Specimens, dbo.Collections, dbo.HostRelations, dbo.PrimaryTaxons, dbo.HostTaxons
 	COMMIT
 END TRY
 BEGIN CATCH

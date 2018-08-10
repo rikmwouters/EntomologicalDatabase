@@ -74,7 +74,7 @@ GO
 
 -------------------Identifications-------------------------------------
 
-EXEC AddIdentification @GivenSpecimenID = 2,
+EXEC AddIdentification @GivenSpecimenID = 3,
 						@GivenGenusName = 'Lagria',
 						@GivenSpeciesName = 'atripes',
 						@GivenIdentifiedBy = 'Rik Wouters',
@@ -138,3 +138,29 @@ EXEC ModifyParentTaxonWithName
 EXEC ModifyParentTaxonWithName
 		@TaxonName = 'Lagria',
 		@ParentTaxonName = 'Coleoptera'
+
+----------------------Add images-----------------------------------------------
+
+INSERT INTO Images(SpecimenID, FileName, ImageFile)
+   SELECT 1, 'hirta.jpg' AS FileName,
+      * FROM OPENROWSET(BULK N'C:\Users\rikwouters\Pictures\EntoBase pictures\hirta.jpg', SINGLE_BLOB) AS ImageFile
+
+	  INSERT INTO Images(SpecimenID, FileName, ImageFile)
+   SELECT 2, 'cocci.jpg' AS FileName,
+      * FROM OPENROWSET(BULK N'C:\Users\rikwouters\Pictures\EntoBase pictures\cocci.jpg', SINGLE_BLOB) AS ImageFile
+
+	  INSERT INTO Images(SpecimenID, FileName, ImageFile)
+   SELECT 3, 'atripes.jpg' AS FileName,
+      * FROM OPENROWSET(BULK N'C:\Users\rikwouters\Pictures\EntoBase pictures\atripes.jpg', SINGLE_BLOB) AS ImageFile
+
+	  INSERT INTO Images(SpecimenID, FileName, ImageFile)
+   SELECT 4, 'vespula.jpg' AS FileName,
+      * FROM OPENROWSET(BULK N'C:\Users\rikwouters\Pictures\EntoBase pictures\vespula.jpg', SINGLE_BLOB) AS ImageFile
+
+	  INSERT INTO Images(SpecimenID, FileName, ImageFile)
+   SELECT 6, 'amara.jpg' AS FileName,
+      * FROM OPENROWSET(BULK N'C:\Users\rikwouters\Pictures\EntoBase pictures\amara.jpg', SINGLE_BLOB) AS ImageFile
+
+	  INSERT INTO Images(SpecimenID, FileName, ImageFile)
+   SELECT 4, 'blabs.jpg' AS FileName,
+      * FROM OPENROWSET(BULK N'C:\Users\rikwouters\Pictures\EntoBase pictures\blabs.jpg', SINGLE_BLOB) AS ImageFile

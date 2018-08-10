@@ -45,6 +45,7 @@ BEGIN TRY
 	CREATE TABLE dbo.Specimens (
 		SpecimenID int IDENTITY(1,1) not null,
 		CollectionID int,
+		CollectionType varchar(50),
 		CreationDate datetime NOT NULL DEFAULT GETDATE(),
 		PRIMARY KEY (SpecimenID),
 		CONSTRAINT FK_CollectionID FOREIGN KEY (CollectionID) REFERENCES Collections(CollectionID),
@@ -60,6 +61,16 @@ BEGIN TRY
 		CONSTRAINT FK_DeterminedTaxonID FOREIGN KEY (DeterminedTaxonID) REFERENCES PrimaryTaxons(TaxonID),
 		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE,
 		PRIMARY KEY (IdentificationID)
+	)
+
+	CREATE TABLE dbo.Images (
+		ImageID int IDENTITY(1,1) NOT NULL,
+		SpecimenID int NOT NULL,
+		FileName varchar(60),
+		ImageFile varbinary(max) NOT NULL,
+		InputDate datetime DEFAULT GETDATE() NOT NULL,
+		CONSTRAINT FK_SpecimenID2 FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE,
+		PRIMARY KEY (ImageID)
 	)
 	
 	COMMIT
