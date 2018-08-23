@@ -4,73 +4,87 @@ GO
 BEGIN TRAN
 BEGIN TRY
 
-	CREATE TABLE dbo.PrimaryTaxons (
+	CREATE TABLE dbo.Taxons (
 		TaxonID int IDENTITY(0,1) NOT NULL,
 		TaxonName varchar(255) NOT NULL,
 		TaxonRank varchar(255) NOT NULL,
 		ParentTaxonID int,
 		PRIMARY KEY (TaxonID)
 	)
-	INSERT INTO dbo.PrimaryTaxons (TaxonName, TaxonRank)
+	INSERT INTO dbo.Taxons (TaxonName, TaxonRank)
 	VALUES ('ORIGIN', 'ORIGIN')
 	
-	CREATE TABLE dbo.HostTaxons (
-		TaxonID int IDENTITY(0,1) NOT NULL,
-		TaxonName varchar(255) NOT NULL,
-		TaxonRank varchar(255),
-		ParentTaxonID int,
-		PRIMARY KEY (TaxonID)
-	)
-	INSERT INTO dbo.HostTaxons (TaxonName, TaxonRank)
-	VALUES ('ORIGIN', 'ORIGIN')
-
-	CREATE TABLE dbo.HostRelations (
+	CREATE TABLE dbo.TaxonRelations (
 		RelationID int IDENTITY(1,1) NOT NULL,
-		HostTaxonID int,
-		GuestTaxonID int,
+		ActorTaxonID int,
+		SubjectTaxonID int,
 		PRIMARY KEY (RelationID),
-		CONSTRAINT FK_HostTaxonID FOREIGN KEY (HostTaxonID) REFERENCES HostTaxons(TaxonID),
-		CONSTRAINT FK_GuestTaxonID FOREIGN KEY (GuestTaxonID) REFERENCES PrimaryTaxons(TaxonID)
+		CONSTRAINT FK_ActorTaxonID FOREIGN KEY (ActorTaxonID) REFERENCES Taxons(TaxonID),
+		CONSTRAINT FK_SubjectTaxonID FOREIGN KEY (SubjectTaxonID) REFERENCES Taxons(TaxonID)
 	)
 
 	CREATE TABLE dbo.Collections (
-		CollectionID int IDENTITY(1,1) not null,
+		CollectionID int IDENTITY(1,1) NOT NULL,
+		CollectionName varchar(255),
+		PRIMARY KEY (CollectionID)
+	)
+
+	CREATE TABLE dbo.Samples (
+		SampleID int IDENTITY(1,1) NOT NULL,
 		Ycoor float,
 		Xcoor float,
 		LocalityName varchar(255),
-		CollectionDate date,
-		PRIMARY KEY (CollectionID),
+		SamplingDate date,
+		SamplingTime time,
+		PRIMARY KEY (SampleID)
+	)
+
+	CREATE TABLE dbo.Individuals (
+		IndividualID int IDENTITY(1,1) NOT NULL,
+		EntryTime datetime NOT NULL DEFAULT GETDATE(),
+		PRIMARY KEY(IndividualID)
 	)
 
 	CREATE TABLE dbo.Specimens (
 		SpecimenID int IDENTITY(1,1) not null,
-		CollectionID int,
-		CollectionType varchar(50),
-		CreationDate datetime NOT NULL DEFAULT GETDATE(),
+		IndividualID int,
+		HostIndividualID int,
+		SampleID int,
 		PRIMARY KEY (SpecimenID),
-		CONSTRAINT FK_CollectionID FOREIGN KEY (CollectionID) REFERENCES Collections(CollectionID),
+		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID),
+		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID),
+		CONSTRAINT FK_SampleID FOREIGN KEY (SampleID) REFERENCES Samples(SampleID)
 	)
-	
-	CREATE TABLE dbo.Identifications (
-		IdentificationID int IDENTITY(1,1) NOT NULL,
-		DeterminedTaxonID int,
-		IdentifiedBy varchar(255),
-		IdentificationDate date,
-		SpecimenID int,
-		Inferior bit DEFAULT 0,
-		CONSTRAINT FK_DeterminedTaxonID FOREIGN KEY (DeterminedTaxonID) REFERENCES PrimaryTaxons(TaxonID),
-		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE,
-		PRIMARY KEY (IdentificationID)
+
+	CREATE TABLE dbo.ColRelations (
+		RelationID int IDENTITY(1,1) NOT NULL,
+		CollectionID int NOT NULL,
+		SpecimenID int NOT NULL,
+		PRIMARY KEY (RelationID),
+		CONSTRAINT FK_CollectionID FOREIGN KEY (CollectionID) REFERENCES Collections(CollectionID),
+		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID)
 	)
 
 	CREATE TABLE dbo.Images (
 		ImageID int IDENTITY(1,1) NOT NULL,
-		SpecimenID int NOT NULL,
-		FileName varchar(60),
+		IndividualID int NOT NULL,
+		ImageName varchar(60),
 		ImageFile varbinary(max) NOT NULL,
-		InputDate datetime DEFAULT GETDATE() NOT NULL,
-		CONSTRAINT FK_SpecimenID2 FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE,
+		EntryTime datetime DEFAULT GETDATE() NOT NULL,
+		CONSTRAINT FK_IndividualID2 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		PRIMARY KEY (ImageID)
+	)
+
+	CREATE TABLE dbo.Determinations (
+		DeterminationID int IDENTITY(1,1) NOT NULL,
+		DeterminedTaxonID int,
+		DeterminedBy varchar(255),
+		DeterminationDate date,
+		IndividualID int,
+		Inferior bit DEFAULT 0,
+		CONSTRAINT FK_DeterminedTaxonID FOREIGN KEY (DeterminedTaxonID) REFERENCES Taxons(TaxonID),
+		CONSTRAINT FK_IndividualID3 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
+		PRIMARY KEY (DeterminationID)
 	)
 	
 	COMMIT
