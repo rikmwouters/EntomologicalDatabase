@@ -1,6 +1,8 @@
 USE EntoBase
 GO
 
+DROP PROCEDURE IF EXISTS dbo.AddSpecimen;  
+GO
 ------------------------------------------------------------------------------------------------------------------
 
 CREATE PROCEDURE AddSpecimen 
@@ -8,14 +10,16 @@ CREATE PROCEDURE AddSpecimen
 		@GivenSpeciesName varchar(255) = 'sp',
 		@GivenIdentifiedBy varchar(255),
 		@GivenIdentificationDate varchar(255),
+		@GivenInferior bit,
 		@GivenYcoor float,
 		@GivenXcoor float,
 		@GivenLocalityName varchar(255),
 		@GivenCollectionDate varchar(255),
-		@RelevantTaxonID int,
-		@RelevantIdentificationID int,
-		@RelevantCollectionID int,
-		@OrphanMessage varchar(255)
+		@RelevantTaxonID int = null,
+		@RelevantIdentificationID int = null,
+		@RelevantCollectionID int = null,
+		@RelevantSpecimenID int = null,
+		@OrphanMessage varchar(255) = null
 AS 
 
 -------------Add taxon?-----------------------------------------------------------------------------------------
@@ -57,16 +61,14 @@ IF NOT EXISTS (
 		WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate AND DeterminedTaxonID = @RelevantTaxonID
 	)
 	BEGIN
-		INSERT INTO Identifications (IdentifiedBy, IdentificationDate, DeterminedTaxonID)
-		VALUES (@GivenIdentifiedBy, @GivenIdentificationDate, @RelevantTaxonID)
+		INSERT INTO Identifications (IdentifiedBy, IdentificationDate, DeterminedTaxonID, Inferior)
+		VALUES (@GivenIdentifiedBy, @GivenIdentificationDate, @RelevantTaxonID, @GivenInferior)
 		SELECT @RelevantIdentificationID = SCOPE_IDENTITY()
 	END
 ELSE 
 	SET @RelevantIdentificationID = (SELECT IdentificationID FROM Identifications 
 	WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate)
 
-SELECT IdentificationID FROM Identifications 
-WHERE IdentifiedBy = @GivenIdentifiedBy AND IdentificationDate = @GivenIdentificationDate
 
 ---------------Add Collection?-----------------------------------------------------------------------------------------
 
@@ -83,23 +85,26 @@ ELSE
 	SET @RelevantCollectionID = (SELECT CollectionID FROM Collections 
 	WHERE Ycoor = @GivenYcoor AND Xcoor = @GivenXcoor)
 
-SELECT CollectionID FROM Collections 
-WHERE Ycoor = @GivenYcoor AND Xcoor = @GivenXcoor
 
 -------------Add specimen?-----------------------------------------------------------------------------------------
 
 IF NOT EXISTS (
-		SELECT SpecimenID FROM Specimens 
+		SELECT Specimens.SpecimenID FROM Specimens
+		INNER JOIN Identifications ON Specimens.SpecimenID=Identifications.SpecimenID
 		WHERE CollectionID = @RelevantCollectionID AND IdentificationID = @RelevantIdentificationID
 	)
 	BEGIN
-		INSERT INTO Specimens (CollectionID, IdentificationID, CreationDate)
-		VALUES (@RelevantCollectionID, @RelevantIdentificationID, GETDATE())
+		INSERT INTO Specimens (CollectionID, CreationDate)
+		VALUES (@RelevantCollectionID, GETDATE())
+		SELECT @RelevantSpecimenID = SCOPE_IDENTITY()
 	END
 ELSE 
 	PRINT 'Deze specimen bestaat al.'
 
-SELECT SpecimenID FROM Specimens 
-WHERE CollectionID = @RelevantCollectionID AND IdentificationID = @RelevantIdentificationID
+
+-------------Update identifications-----------------------------------------------------------------------------------
+UPDATE Identifications
+SET SpecimenID = @RelevantSpecimenID
+WHERE IdentificationID = @RelevantIdentificationID
 
 GO

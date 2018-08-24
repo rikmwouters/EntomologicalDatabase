@@ -19,8 +19,8 @@ BEGIN TRY
 		ActorTaxonID int,
 		SubjectTaxonID int,
 		PRIMARY KEY (RelationID),
-		CONSTRAINT FK_ActorTaxonID FOREIGN KEY (ActorTaxonID) REFERENCES Taxons(TaxonID),
-		CONSTRAINT FK_SubjectTaxonID FOREIGN KEY (SubjectTaxonID) REFERENCES Taxons(TaxonID)
+		CONSTRAINT FK_ActorTaxonID FOREIGN KEY (ActorTaxonID) REFERENCES Taxons(TaxonID) ON DELETE CASCADE,
+		CONSTRAINT FK_SubjectTaxonID FOREIGN KEY (SubjectTaxonID) REFERENCES Taxons(TaxonID) ON DELETE CASCADE
 	)
 
 	CREATE TABLE dbo.Collections (
@@ -46,12 +46,12 @@ BEGIN TRY
 	)
 
 	CREATE TABLE dbo.Specimens (
-		SpecimenID int IDENTITY(1,1) not null,
-		IndividualID int,
+		SpecimenID int IDENTITY(1,1) NOT NULL,
+		IndividualID int NOT NULL,
 		HostIndividualID int,
 		SampleID int,
 		PRIMARY KEY (SpecimenID),
-		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID),
+		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID),
 		CONSTRAINT FK_SampleID FOREIGN KEY (SampleID) REFERENCES Samples(SampleID)
 	)
@@ -61,8 +61,8 @@ BEGIN TRY
 		CollectionID int NOT NULL,
 		SpecimenID int NOT NULL,
 		PRIMARY KEY (RelationID),
-		CONSTRAINT FK_CollectionID FOREIGN KEY (CollectionID) REFERENCES Collections(CollectionID),
-		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID)
+		CONSTRAINT FK_CollectionID FOREIGN KEY (CollectionID) REFERENCES Collections(CollectionID) ON DELETE CASCADE,
+		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE
 	)
 
 	CREATE TABLE dbo.Images (
