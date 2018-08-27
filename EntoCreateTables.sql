@@ -1,8 +1,8 @@
 USE EntoBase
 GO
 
-BEGIN TRAN
-BEGIN TRY
+--BEGIN TRAN
+--BEGIN TRY
 
 	CREATE TABLE dbo.Taxons (
 		TaxonID int IDENTITY(0,1) NOT NULL,
@@ -19,8 +19,8 @@ BEGIN TRY
 		ActorTaxonID int,
 		SubjectTaxonID int,
 		PRIMARY KEY (RelationID),
-		CONSTRAINT FK_ActorTaxonID FOREIGN KEY (ActorTaxonID) REFERENCES Taxons(TaxonID) ON DELETE CASCADE,
-		CONSTRAINT FK_SubjectTaxonID FOREIGN KEY (SubjectTaxonID) REFERENCES Taxons(TaxonID) ON DELETE CASCADE
+		CONSTRAINT FK_ActorTaxonID FOREIGN KEY (ActorTaxonID) REFERENCES Taxons(TaxonID),
+		CONSTRAINT FK_SubjectTaxonID FOREIGN KEY (SubjectTaxonID) REFERENCES Taxons(TaxonID)
 	)
 
 	CREATE TABLE dbo.Collections (
@@ -87,9 +87,9 @@ BEGIN TRY
 		PRIMARY KEY (DeterminationID)
 	)
 	
-	COMMIT
-END TRY
-
+--	COMMIT
+--END TRY
+/*
 BEGIN CATCH
 	ROLLBACK
 	SELECT  
@@ -100,5 +100,5 @@ BEGIN CATCH
         ,ERROR_LINE() AS ErrorLine  
         ,ERROR_MESSAGE() AS ErrorMessage;  
 END CATCH
-
+*/
 GO
