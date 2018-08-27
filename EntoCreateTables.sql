@@ -41,19 +41,19 @@ GO
 
 	CREATE TABLE dbo.Individuals (
 		IndividualID int IDENTITY(1,1) NOT NULL,
+		SampleID int,
 		EntryTime datetime NOT NULL DEFAULT GETDATE(),
-		PRIMARY KEY(IndividualID)
+		PRIMARY KEY(IndividualID),
+		CONSTRAINT FK_SampleID FOREIGN KEY (SampleID) REFERENCES Samples(SampleID)
 	)
 
 	CREATE TABLE dbo.Specimens (
 		SpecimenID int IDENTITY(1,1) NOT NULL,
 		IndividualID int NOT NULL,
 		HostIndividualID int,
-		SampleID int,
 		PRIMARY KEY (SpecimenID),
 		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
-		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID),
-		CONSTRAINT FK_SampleID FOREIGN KEY (SampleID) REFERENCES Samples(SampleID)
+		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID)
 	)
 
 	CREATE TABLE dbo.ColRelations (
@@ -71,8 +71,17 @@ GO
 		ImageName varchar(60),
 		ImageFile varbinary(max) NOT NULL,
 		EntryTime datetime DEFAULT GETDATE() NOT NULL,
-		CONSTRAINT FK_IndividualID2 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		PRIMARY KEY (ImageID)
+	)
+
+	CREATE TABLE dbo.ImageRelations (
+		RelationID int IDENTITY(1,1) NOT NULL,
+		ImageID int NOT NULL,
+		IndividualID int NOT NULL,
+		SubjectDescription varchar(255),
+		PRIMARY KEY (RelationID),
+		CONSTRAINT FK_IndividualID4 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID),
+		CONSTRAINT FK_ImageID FOREIGN KEY (ImageID) REFERENCES Images(ImageID)
 	)
 
 	CREATE TABLE dbo.Determinations (
