@@ -4,7 +4,7 @@ GO
 BEGIN TRAN
 
 BEGIN TRY
-	DROP TABLE IF EXISTS dbo.Images, dbo.Determinations, dbo.TaxonRelations, dbo.Taxons, dbo.ColRelations, dbo.Collections, dbo.Specimens, dbo.Samples, dbo.Individuals
+	DROP TABLE IF EXISTS dbo.ImageRelations, dbo.Images, dbo.Determinations, dbo.TaxonRelations, dbo.Taxons, dbo.ColRelations, dbo.Collections, dbo.Specimens, dbo.Individuals, dbo.Samples
 	COMMIT
 END TRY
 BEGIN CATCH

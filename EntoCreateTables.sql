@@ -1,8 +1,8 @@
 USE EntoBase
 GO
 
---BEGIN TRAN
---BEGIN TRY
+BEGIN TRAN
+BEGIN TRY
 
 	CREATE TABLE dbo.Taxons (
 		TaxonID int IDENTITY(0,1) NOT NULL,
@@ -51,6 +51,7 @@ GO
 		SpecimenID int IDENTITY(1,1) NOT NULL,
 		IndividualID int NOT NULL,
 		HostIndividualID int,
+		PhysicalSpecimenID int,
 		PRIMARY KEY (SpecimenID),
 		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID)
@@ -59,15 +60,14 @@ GO
 	CREATE TABLE dbo.ColRelations (
 		RelationID int IDENTITY(1,1) NOT NULL,
 		CollectionID int NOT NULL,
-		SpecimenID int NOT NULL,
+		IndividualID int NOT NULL,
 		PRIMARY KEY (RelationID),
 		CONSTRAINT FK_CollectionID FOREIGN KEY (CollectionID) REFERENCES Collections(CollectionID) ON DELETE CASCADE,
-		CONSTRAINT FK_SpecimenID FOREIGN KEY (SpecimenID) REFERENCES Specimens(SpecimenID) ON DELETE CASCADE
+		CONSTRAINT FK_IndividualID5 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 	)
 
 	CREATE TABLE dbo.Images (
 		ImageID int IDENTITY(1,1) NOT NULL,
-		IndividualID int NOT NULL,
 		ImageName varchar(60),
 		ImageFile varbinary(max) NOT NULL,
 		EntryTime datetime DEFAULT GETDATE() NOT NULL,
@@ -80,8 +80,8 @@ GO
 		IndividualID int NOT NULL,
 		SubjectDescription varchar(255),
 		PRIMARY KEY (RelationID),
-		CONSTRAINT FK_IndividualID4 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID),
-		CONSTRAINT FK_ImageID FOREIGN KEY (ImageID) REFERENCES Images(ImageID)
+		CONSTRAINT FK_IndividualID4 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
+		CONSTRAINT FK_ImageID FOREIGN KEY (ImageID) REFERENCES Images(ImageID) ON DELETE CASCADE
 	)
 
 	CREATE TABLE dbo.Determinations (
@@ -96,9 +96,9 @@ GO
 		PRIMARY KEY (DeterminationID)
 	)
 	
---	COMMIT
---END TRY
-/*
+	COMMIT
+END TRY
+
 BEGIN CATCH
 	ROLLBACK
 	SELECT  
@@ -109,5 +109,5 @@ BEGIN CATCH
         ,ERROR_LINE() AS ErrorLine  
         ,ERROR_MESSAGE() AS ErrorMessage;  
 END CATCH
-*/
+
 GO

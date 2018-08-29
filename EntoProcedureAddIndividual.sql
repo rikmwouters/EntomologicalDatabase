@@ -10,12 +10,14 @@ CREATE PROCEDURE AddIndividual
 		@GivenSpeciesName varchar(255) = 'sp',
 		@GivenDeterminedBy varchar(255),
 		@GivenDeterminationDate varchar(255),
-		@GivenInferior bit,
+		@GivenInferior bit = 0,
 		@GivenYcoor float,
 		@GivenXcoor float,
 		@GivenLocalityName varchar(255),
 		@GivenSamplingDate varchar(255),
-		@RelevantIndividualID int,
+		@GivenPhysicalSpecimenID int = null,
+		@GivenCollectionName varchar(255) = null,
+		@RelevantIndividualID int = null,
 		@RelevantTaxonID int = null,
 		@RelevantDeterminationID int = null,
 		@RelevantSampleID int = null,
@@ -32,8 +34,11 @@ SELECT @RelevantIndividualID = SCOPE_IDENTITY()
 -------------Add taxon?-----------------------------------------------------------------------------------------
 
 IF NOT EXISTS(
-	SELECT TaxonID
-	FROM Taxons
+	SELECT Species.TaxonID
+	FROM Taxons AS Species
+	INNER JOIN Taxons AS Genus ON Genus.TaxonID=Species.ParentTaxonID
+	WHERE Species.TaxonName = @GivenSpeciesName
+	AND Genus.TaxonName = @GivenGenusName
 )
 BEGIN
 	INSERT INTO Taxons (TaxonName, TaxonRank)
@@ -62,11 +67,12 @@ ELSE
 		END
 
 ---------------Add determination-----------------------------------------------------------------------------------------
-
-INSERT INTO Determinations (DeterminedBy, DeterminationDate, DeterminedTaxonID, IndividualID, Inferior)
-	VALUES (@GivenDeterminedBy, @GivenDeterminationDate, @RelevantTaxonID, @RelevantIndividualID, @GivenInferior)
-SELECT @RelevantDeterminationID = SCOPE_IDENTITY()
-
+IF EXISTS (SELECT @RelevantTaxonID)
+	BEGIN
+		INSERT INTO Determinations (DeterminedBy, DeterminationDate, DeterminedTaxonID, IndividualID, Inferior)
+			VALUES (@GivenDeterminedBy, @GivenDeterminationDate, @RelevantTaxonID, @RelevantIndividualID, @GivenInferior)
+		SELECT @RelevantDeterminationID = SCOPE_IDENTITY()
+	END
 ---------------Add sample?-----------------------------------------------------------------------------------------
 
 IF NOT EXISTS (
@@ -78,9 +84,33 @@ IF NOT EXISTS (
 		VALUES (@GivenYcoor, @GivenXcoor, @GivenLocalityName, @GivenSamplingDate)
 		SELECT @RelevantSampleID = SCOPE_IDENTITY()
 	END
-ELSE 
-	SET @RelevantSampleID = (SELECT SampleID FROM Samples 
-	WHERE Ycoor = @GivenYcoor AND Xcoor = @GivenXcoor AND LocalityName = @GivenLocalityName AND SamplingDate = @GivenSamplingDate)
+ELSE
+	BEGIN
+		SET @RelevantSampleID = (SELECT SampleID FROM Samples 
+		WHERE Ycoor = @GivenYcoor AND Xcoor = @GivenXcoor AND LocalityName = @GivenLocalityName AND SamplingDate = @GivenSamplingDate)
+	END
 
---------------Add specimen-----------------------------------------------------------------------------------------
+UPDATE Individuals
+SET SampleID = @RelevantSampleID
+WHERE IndividualID = @RelevantIndividualID
 
+--------------Add specimen?-----------------------------------------------------------------------------------------
+
+IF EXISTS (SELECT @GivenPhysicalSpecimenID)
+	BEGIN
+		INSERT INTO Specimens (IndividualID, PhysicalSpecimenID)
+		VALUES (@RelevantIndividualID, @GivenPhysicalSpecimenID)
+	END
+
+----------Add collection?--------------------------------------------------------------------------------------------
+
+IF EXISTS (SELECT @GivenCollectionName)
+	BEGIN
+		IF NOT EXISTS (SELECT CollectionID FROM Collections WHERE CollectionName = @GivenCollectionName)
+			BEGIN
+				INSERT INTO Collections (CollectionName)
+				VALUES (@GivenCollectionName)
+			END				
+		INSERT INTO ColRelations (IndividualID, CollectionID)
+		VALUES (@RelevantIndividualID, (SELECT CollectionID FROM Collections WHERE CollectionName = @GivenCollectionName))
+	END
