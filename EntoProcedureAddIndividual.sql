@@ -6,15 +6,15 @@ GO
 ------------------------------------------------------------------------------------------------------------------
 
 CREATE PROCEDURE AddIndividual
-		@GivenGenusName varchar(255),
-		@GivenSpeciesName varchar(255) = 'sp',
-		@GivenDeterminedBy varchar(255),
-		@GivenDeterminationDate varchar(255),
+		@GivenGenusName varchar(255) = null,
+		@GivenSpeciesName varchar(255) = null,
+		@GivenDeterminedBy varchar(255) = null,
+		@GivenDeterminationDate varchar(255) = null,
 		@GivenInferior bit = 0,
-		@GivenYcoor float,
-		@GivenXcoor float,
-		@GivenLocalityName varchar(255),
-		@GivenSamplingDate varchar(255),
+		@GivenYcoor float = null,
+		@GivenXcoor float = null,
+		@GivenLocalityName varchar(255) = null,
+		@GivenSamplingDate varchar(255) = null,
 		@GivenPhysicalSpecimenID int = null,
 		@GivenCollectionName varchar(255) = null,
 		@RelevantIndividualID int = null,
@@ -24,6 +24,11 @@ CREATE PROCEDURE AddIndividual
 		@RelevantSpecimenID int = null,
 		@OrphanMessage varchar(255) = null
 AS
+
+IF @GivenGenusName IS NOT NULL
+	BEGIN
+		SELECT @GivenSpeciesName = 'sp'
+	END
 
 -------------Add Individual------------------------------------------------------------------------------------
 
@@ -67,7 +72,7 @@ ELSE
 		END
 
 ---------------Add determination-----------------------------------------------------------------------------------------
-IF EXISTS (SELECT @RelevantTaxonID)
+IF @RelevantTaxonID IS NOT NULL
 	BEGIN
 		INSERT INTO Determinations (DeterminedBy, DeterminationDate, DeterminedTaxonID, IndividualID, Inferior)
 			VALUES (@GivenDeterminedBy, @GivenDeterminationDate, @RelevantTaxonID, @RelevantIndividualID, @GivenInferior)
@@ -96,7 +101,7 @@ WHERE IndividualID = @RelevantIndividualID
 
 --------------Add specimen?-----------------------------------------------------------------------------------------
 
-IF EXISTS (SELECT @GivenPhysicalSpecimenID)
+IF @GivenPhysicalSpecimenID IS NOT NULL
 	BEGIN
 		INSERT INTO Specimens (IndividualID, PhysicalSpecimenID)
 		VALUES (@RelevantIndividualID, @GivenPhysicalSpecimenID)
@@ -104,7 +109,7 @@ IF EXISTS (SELECT @GivenPhysicalSpecimenID)
 
 ----------Add collection?--------------------------------------------------------------------------------------------
 
-IF EXISTS (SELECT @GivenCollectionName)
+IF @GivenCollectionName IS NOT NULL
 	BEGIN
 		IF NOT EXISTS (SELECT CollectionID FROM Collections WHERE CollectionName = @GivenCollectionName)
 			BEGIN
