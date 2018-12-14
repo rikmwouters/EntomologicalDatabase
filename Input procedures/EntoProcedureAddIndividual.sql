@@ -1,4 +1,4 @@
-USE EntoBase
+USE Rapento
 GO
 
 DROP PROCEDURE IF EXISTS dbo.AddIndividual;  
@@ -15,7 +15,7 @@ CREATE PROCEDURE AddIndividual
 		@GivenXcoor float = null,
 		@GivenLocalityName varchar(255) = null,
 		@GivenSamplingDate varchar(255) = null,
-		@GivenPhysicalSpecimenID int = null,
+		@GivenPhysicalSpecimenID varchar(100) = null,
 		@GivenCollectionName varchar(255) = null,
 		@RelevantIndividualID int = null,
 		@RelevantTaxonID int = null,
@@ -25,10 +25,7 @@ CREATE PROCEDURE AddIndividual
 		@OrphanMessage varchar(255) = null
 AS
 
-IF @GivenGenusName IS NOT NULL
-	BEGIN
-		SELECT @GivenSpeciesName = 'sp'
-	END
+
 
 -------------Add Individual------------------------------------------------------------------------------------
 
@@ -38,38 +35,74 @@ SELECT @RelevantIndividualID = SCOPE_IDENTITY()
 
 -------------Add taxon?-----------------------------------------------------------------------------------------
 
-IF NOT EXISTS(
+--Only the genus is given
+IF @GivenGenusName IS NOT NULL AND (@GivenSpeciesName IS NULL OR @GivenSpeciesName = '')
+	BEGIN
+		IF EXISTS(
+			SELECT TaxonID FROM Taxons
+			WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus'
+		)
+		BEGIN
+			SET @RelevantTaxonID = (SELECT TaxonID FROM Taxons
+			WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus')
+		END
+
+		ELSE
+		BEGIN
+			INSERT INTO Taxons (TaxonName, TaxonRank)
+			VALUES (@GivenGenusName, 'Genus')
+			SET @OrphanMessage = CONCAT('No parent has been associated with the new ', @GivenGenusName, ' genus. (TaxonID:', 
+			(SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus'), ')')
+			RAISERROR(@OrphanMessage, 0, 1)
+			SELECT @RelevantTaxonID = SCOPE_IDENTITY()
+		END
+	END
+
+--The genus and species are both present in the database
+ELSE IF EXISTS (
+	SELECT TaxonID FROM Taxons 
+	WHERE TaxonName = @GivenSpeciesName
+	AND TaxonRank = 'Species'
+	AND ParentTaxonID = (SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus')
+)
+BEGIN
+	SET @RelevantTaxonID = (SELECT TaxonID FROM Taxons
+	WHERE TaxonName = @GivenSpeciesName AND TaxonRank = 'Species'
+	AND ParentTaxonID = (SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus'))
+END
+
+--Only the genus is present in the database
+ELSE IF EXISTS(
+	SELECT TaxonID FROM Taxons 
+	WHERE TaxonName = @GivenGenusName
+	AND TaxonRank = 'Genus'
+)
+AND NOT EXISTS(
 	SELECT Species.TaxonID
 	FROM Taxons AS Species
 	INNER JOIN Taxons AS Genus ON Genus.TaxonID=Species.ParentTaxonID
 	WHERE Species.TaxonName = @GivenSpeciesName
 	AND Genus.TaxonName = @GivenGenusName
+	AND Species.TaxonRank = 'Species'
 )
+BEGIN
+	INSERT INTO Taxons (TaxonName, TaxonRank, ParentTaxonID)
+	VALUES (@GivenSpeciesName, 'Species', (SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus'))
+	SELECT @RelevantTaxonID = SCOPE_IDENTITY()
+END
+
+--Neither genus or species are present in the database
+ELSE
 BEGIN
 	INSERT INTO Taxons (TaxonName, TaxonRank)
 	VALUES (@GivenGenusName, 'Genus')
-	SET @OrphanMessage = CONCAT('No parent has been associated with the new ', @GivenGenusName, ' genus. (TaxonID:', (SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName), ')')
+	SET @OrphanMessage = CONCAT('No parent has been associated with the new ', @GivenGenusName, ' genus. (TaxonID:', 
+	(SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName AND TaxonRank = 'Genus'), ')')
 	RAISERROR(@OrphanMessage, 0, 1)
 	INSERT INTO Taxons (TaxonName, TaxonRank, ParentTaxonID)
 	VALUES (@GivenSpeciesName, 'Species', SCOPE_IDENTITY())
 	SELECT @RelevantTaxonID = SCOPE_IDENTITY()
 END
-ELSE
-	IF EXISTS (
-	SELECT TaxonID FROM Taxons 
-	WHERE TaxonName = @GivenSpeciesName
-	AND ParentTaxonID = (SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName)
-	)
-	BEGIN
-		SET @RelevantTaxonID = (SELECT TaxonID FROM Taxons 
-		WHERE TaxonName = @GivenSpeciesName)
-	END
-	ELSE
-		BEGIN
-			INSERT INTO Taxons (TaxonName, TaxonRank, ParentTaxonID)
-			VALUES (@GivenSpeciesName, 'Species', (SELECT TaxonID FROM Taxons WHERE TaxonName = @GivenGenusName))
-			SELECT @RelevantTaxonID = SCOPE_IDENTITY()
-		END
 
 ---------------Add determination-----------------------------------------------------------------------------------------
 IF @RelevantTaxonID IS NOT NULL

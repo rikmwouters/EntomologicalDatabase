@@ -1,4 +1,4 @@
-USE EntoBase
+USE Rapento
 GO
 
 CREATE PROCEDURE AddTaxon
@@ -6,5 +6,5 @@ CREATE PROCEDURE AddTaxon
 	@TaxonRank varchar(255),
 	@ParentTaxonID int
 AS
-INSERT INTO PrimaryTaxons (TaxonName, TaxonRank, ParentTaxonID)
+INSERT INTO Taxons (TaxonName, TaxonRank, ParentTaxonID)
 VALUES (@TaxonName, @TaxonRank, @ParentTaxonID)

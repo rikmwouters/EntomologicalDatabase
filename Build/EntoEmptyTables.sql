@@ -1,4 +1,4 @@
-USE EntoBase
+USE Rapento
 GO
 
 DELETE FROM ColRelations

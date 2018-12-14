@@ -1,4 +1,4 @@
-USE EntoBase
+USE Rapento
 GO
 
 BEGIN TRAN
@@ -51,7 +51,7 @@ BEGIN TRY
 		SpecimenID int IDENTITY(1,1) NOT NULL,
 		IndividualID int NOT NULL,
 		HostIndividualID int,
-		PhysicalSpecimenID int,
+		PhysicalSpecimenID varchar(100),
 		PRIMARY KEY (SpecimenID),
 		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID)

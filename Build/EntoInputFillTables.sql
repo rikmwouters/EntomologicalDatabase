@@ -1,9 +1,9 @@
-USE EntoBase
+USE Rapento
 GO
 
 -------------------Specimens-------------------------------------
 
-EXEC AddSpecimen @GivenGenusName = 'Lagria',
+EXEC AddIndividual @GivenGenusName = 'Lagria',
 				@GivenSpeciesName = 'hirta',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-04-22',
@@ -13,7 +13,7 @@ EXEC AddSpecimen @GivenGenusName = 'Lagria',
 				@GivenCollectionDate = '2018-04-15'
 GO
 
-EXEC AddSpecimen @GivenGenusName = 'Coccinella',
+EXEC AddIndividual @GivenGenusName = 'Coccinella',
 				@GivenSpeciesName = 'septapunctata',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-04-22',
@@ -23,7 +23,7 @@ EXEC AddSpecimen @GivenGenusName = 'Coccinella',
 				@GivenCollectionDate = '2018-04-15'
 GO
 
-EXEC AddSpecimen @GivenGenusName = 'Lagria',
+EXEC AddIndividual @GivenGenusName = 'Lagria',
 				@GivenSpeciesName = 'hirta',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-04-25',
@@ -33,7 +33,7 @@ EXEC AddSpecimen @GivenGenusName = 'Lagria',
 				@GivenCollectionDate = '2018-04-18'
 GO
 
-EXEC AddSpecimen @GivenGenusName = 'Vespula',
+EXEC AddIndividual @GivenGenusName = 'Vespula',
 				@GivenSpeciesName = 'vulgaris',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-05-27',
@@ -43,7 +43,7 @@ EXEC AddSpecimen @GivenGenusName = 'Vespula',
 				@GivenCollectionDate = '2018-04-18'
 GO
 
-EXEC AddSpecimen @GivenGenusName = 'Lagria',
+EXEC AddIndividual @GivenGenusName = 'Lagria',
 				@GivenSpeciesName = 'atripes',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-05-17',
@@ -54,7 +54,7 @@ EXEC AddSpecimen @GivenGenusName = 'Lagria',
 GO
 
 
-EXEC AddSpecimen @GivenGenusName = 'Amara',
+EXEC AddIndividual @GivenGenusName = 'Amara',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-05-17',
 				@GivenYcoor = 52.587654,
@@ -63,7 +63,7 @@ EXEC AddSpecimen @GivenGenusName = 'Amara',
 				@GivenCollectionDate = '2018-04-19'
 GO
 
-EXEC AddSpecimen @GivenGenusName = 'Blabs',
+EXEC AddIndividual @GivenGenusName = 'Blabs',
 				@GivenIdentifiedBy = 'Rik Wouters',
 				@GivenIdentificationDate = '2018-05-17',
 				@GivenYcoor = 52.587654,
@@ -74,7 +74,7 @@ GO
 
 -------------------Identifications-------------------------------------
 
-EXEC AddIdentification @GivenSpecimenID = 3,
+EXEC AddDetermination @GivenSpecimenID = 3,
 						@GivenGenusName = 'Lagria',
 						@GivenSpeciesName = 'atripes',
 						@GivenIdentifiedBy = 'Rik Wouters',
