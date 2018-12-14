@@ -1,4 +1,4 @@
-Use EntoBase
+Use Rapento
 GO
 
 CREATE VIEW BestDeterminations

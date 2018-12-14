@@ -1,6 +1,6 @@
 USE Rapento
 GO
 
-EXEC AddTaxon @TaxonName = 'Coleoptera',
-				@TaxonRank = 'Order',
+EXEC AddTaxon @TaxonName = 'Vespulidae',
+				@TaxonRank = 'Family',
 				@ParentTaxonID = 0

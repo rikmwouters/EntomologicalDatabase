@@ -1,4 +1,4 @@
-USE EntoBase
+USE Rapento
 GO
 
 DROP VIEW IF EXISTS SpeciesFoundPerMonth
@@ -6,14 +6,15 @@ GO
 
 CREATE VIEW SpeciesFoundPerMonth
 AS
-SELECT  DATENAME(MONTH, CollectionDate) AS CollectionMonth,
+SELECT  DATENAME(MONTH, SamplingDate) AS SamplingMonth,
         COUNT(TaxonID) AS NumberOfSpecies
-	FROM Collections
-	INNER JOIN Specimens ON Specimens.CollectionID = Collections.CollectionID
-	INNER JOIN Identifications ON Specimens.SpecimenID = Identifications.SpecimenID
-	INNER JOIN PrimaryTaxons ON Identifications.DeterminedTaxonID = PrimaryTaxons.TaxonID
+	FROM Samples
+	INNER JOIN Individuals ON Individuals.SampleID = Samples.SampleID
+	INNER JOIN Determinations ON Individuals.IndividualID = Determinations.IndividualID
+	INNER JOIN Taxons ON Determinations.DeterminedTaxonID = Taxons.TaxonID
 	WHERE TaxonRank = 'Species'
-	GROUP BY DATEPART(YEAR, CollectionDate), DATENAME(MONTH, CollectionDate)
+	AND SamplingDate IS NOT NULL
+	GROUP BY DATEPART(YEAR, SamplingDate), DATENAME(MONTH, SamplingDate)
 GO
 
 SELECT * FROM SpeciesFoundPerMonth
