@@ -117,6 +117,9 @@ IF NOT EXISTS (
 		SELECT SampleID FROM Samples 
 		WHERE Ycoor = @GivenYcoor AND Xcoor = @GivenXcoor AND LocalityName = @GivenLocalityName AND SamplingDate = @GivenSamplingDate
 	)
+AND (
+		@GivenYcoor IS NOT NULL OR @GivenXcoor IS NOT NULL OR @GivenLocalityName IS NOT NULL OR @GivenSamplingDate IS NOT NULL
+	)
 	BEGIN
 		INSERT INTO Samples (Ycoor, Xcoor, LocalityName, SamplingDate)
 		VALUES (@GivenYcoor, @GivenXcoor, @GivenLocalityName, @GivenSamplingDate)
