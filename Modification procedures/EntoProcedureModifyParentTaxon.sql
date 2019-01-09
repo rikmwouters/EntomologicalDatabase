@@ -1,6 +1,11 @@
 USE Rapento
 GO
 
+DROP PROCEDURE IF EXISTS dbo.ModifyParentTaxonWithID
+GO
+DROP PROCEDURE IF EXISTS dbo.ModifyParentTaxonWithName
+GO
+
 ---------Using the TaxonID----------
 CREATE PROCEDURE ModifyParentTaxonWithID
 	@TaxonID int,
@@ -38,7 +43,7 @@ IF EXISTS (
 )
 BEGIN
 	UPDATE Taxons
-	SET ParentTaxonID = (SELECT TaxonID FROM Taxons WHERE TaxonName = @ParentTaxonName)
+	SET ParentTaxonID = (SELECT MIN(TaxonID) FROM Taxons WHERE TaxonName = @ParentTaxonName)
 	WHERE TaxonName = @TaxonName
 END
 GO
