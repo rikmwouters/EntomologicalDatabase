@@ -1,6 +1,8 @@
 USE Rapento
 GO
 
+DELETE FROM ExpectedTypes
+DELETE FROM ExpectedStages
 DELETE FROM ColRelations
 DELETE FROM Specimens
 DELETE FROM Collections

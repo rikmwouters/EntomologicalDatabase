@@ -11,3 +11,5 @@ SELECT * FROM Images
 SELECT * FROM Determinations
 SELECT * FROM Taxons
 SELECT * FROM TaxonRelations
+SELECT * FROM ExpectedTypes
+SELECT * FROM ExpectedStages

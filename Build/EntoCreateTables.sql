@@ -43,6 +43,7 @@ BEGIN TRY
 		IndividualID int IDENTITY(1,1) NOT NULL,
 		SampleID int,
 		EntryTime datetime NOT NULL DEFAULT GETDATE(),
+		LifeStage varchar(100),
 		PRIMARY KEY(IndividualID),
 		CONSTRAINT FK_SampleID FOREIGN KEY (SampleID) REFERENCES Samples(SampleID)
 	)
@@ -52,6 +53,7 @@ BEGIN TRY
 		IndividualID int NOT NULL,
 		HostIndividualID int,
 		PhysicalSpecimenID varchar(100),
+		SubjectType varchar(100),
 		PRIMARY KEY (SpecimenID),
 		CONSTRAINT FK_IndividualID FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		CONSTRAINT FK_HostIndividualID FOREIGN KEY (HostIndividualID) REFERENCES Individuals(IndividualID)
@@ -79,6 +81,7 @@ BEGIN TRY
 		ImageID int NOT NULL,
 		IndividualID int NOT NULL,
 		SubjectDescription varchar(255),
+		SubjectType varchar(100),
 		PRIMARY KEY (RelationID),
 		CONSTRAINT FK_IndividualID4 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		CONSTRAINT FK_ImageID FOREIGN KEY (ImageID) REFERENCES Images(ImageID) ON DELETE CASCADE
@@ -94,6 +97,22 @@ BEGIN TRY
 		CONSTRAINT FK_DeterminedTaxonID FOREIGN KEY (DeterminedTaxonID) REFERENCES Taxons(TaxonID),
 		CONSTRAINT FK_IndividualID3 FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE,
 		PRIMARY KEY (DeterminationID)
+	)
+	
+	CREATE TABLE dbo.ExpectedTypes (
+		TypeID int IDENTITY(1,1) NOT NULL,
+		TypeName varchar(100) NOT NULL,
+		TaxonID int NOT NULL,
+		CONSTRAINT FK_TaxonID1 FOREIGN KEY (TaxonID) REFERENCES Taxons(TaxonID),
+		PRIMARY KEY (TypeID)
+	)
+	
+	CREATE TABLE dbo.ExpectedStages (
+		StageID int IDENTITY(1,1) NOT NULL,
+		StageName varchar(100) NOT NULL,
+		TaxonID int NOT NULL,
+		CONSTRAINT FK_TaxonID2 FOREIGN KEY (TaxonID) REFERENCES Taxons(TaxonID),
+		PRIMARY KEY (StageID)
 	)
 	
 	COMMIT
